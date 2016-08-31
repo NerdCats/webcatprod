@@ -1,0 +1,68 @@
+<div [ngClass]="{widget: componentMode=='WIDGET'}">
+    <widget-header title="Job History" icon="fa-tasks">
+        <a href="#" *ngIf="mode=='ADMIN'">Manage</a>
+    </widget-header>
+    <widget-body classes="no-padding">
+        <div *ngIf="status=='IN_PROGRESS'">
+            <progress-bubble></progress-bubble>
+        </div>
+        <div class="message" *ngIf="status=='EMPTY'">
+            {{statusMessage}}
+        </div>
+        <div class="error" *ngIf="status=='FAILED'">
+            {{statusMessage}}
+        </div>
+        <div class="table-responsive" *ngIf="status=='SUCCESSFUL'">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>HRID</th>
+                        <th>Name</th>
+                        <th>State</th>
+                        <th *ngIf="accessMode=='ADMIN'">User</th>
+                        <th>Payment Method</th>
+                        <th>Payment Status</th>
+                        <th>Order Total</th>
+                        <th>Created</th>
+                        <th>Modified</th>
+                    </tr>
+                    <tr *ngFor="let job of jobs" (click)="goToTrackingPage(job.HRID)">
+                        <td class="pointer"><a href="#/track/{{job.HRID}}">{{job.HRID}}</a></td>
+                        <td>{{job.Name}}</td>
+                        <td>
+                            <span [ngClass]="setJobStatusLabelClass(job.State)">{{job.State}}</span>
+                        </td>
+                        <td *ngIf="accessMode=='ADMIN'">{{job.User.UserName}}</td>
+                        <td>{{job.PaymentMethod}}</td>
+                        <td>
+                            <span [ngClass]="setPaymentStatusLabelClass(job.PaymentStatus)">{{job.PaymentStatus | uppercase}}</span>
+                        </td>
+                        <td>
+                            {{job.Order.OrderCart.TotalToPay}}
+                        </td>
+                        <td>
+                            {{job.CreateTime | date:"EEE d MMM y,h:m TT"}}
+                        </td>
+                        <td>
+                            {{job.ModifiedTime | date:"EEE d MMM y,h:m TT"}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </widget-body>
+    <widget-footer>
+        <ul class="pagination pagination-sm pull-right" *ngIf="status=='SUCCESSFUL'">
+            <li *ngIf="pagination.PrevPage">
+                <a class="pointer" (click)="loadJobWithUrl(pagination.PrevPage)">&laquo;</a>
+            </li>
+            <li  *ngFor="let page of paginationArray">
+                <a class="{{page.isSelected}} pointer" (click)="getJobsWithPageNumber(page.pageNo)">{{page.pageNo + 1}}</a>
+            </li>
+            <li *ngIf="pagination.NextPage">
+                <a class="pointer" (click)="loadJobWithUrl(pagination.NextPage)">&raquo;</a>
+            </li>
+        </ul>
+        <div class=clearfix></div>
+    </widget-footer>
+</div>

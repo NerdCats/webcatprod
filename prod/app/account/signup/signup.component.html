@@ -1,0 +1,65 @@
+<modal #modal class="modal_vcenter" [size]="sm" (onClose)="onModalClosed()" (onDismiss)="onModelDismissed()">
+    <modal-header [show-close]="true">
+        <h4 class="modal-title">Sign Up</h4>
+    </modal-header>
+    <modal-body>
+        <div class="buttonmenu" *ngIf="!selectedUserType">
+            <button type="button" class="btn btn-block btn-lg btn-primary btn_wrap" (click)="onSelectEnterpriseUser()">Own a business? Sign up as an Enterprise User</button>
+            <button type="button" class="btn btn-block btn-lg btn-primary btn_wrap" (click)="onSelectUser()">Sign up as a User</button>
+        </div>
+        <form [ngFormModel]="signupForm" *ngIf="isFormActive">
+            <div *ngIf="!submitted && selectedUserType">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input ngControl="username" type="text" class="form-control" placeholder="Enter your desried username here" [(ngModel)]="registrationModel.UserName" [ngFormControl]="signupForm.controls['username']">
+                    <control-message control="username"></control-message>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input ngControl="email" type="email" class="form-control" placeholder="ex: someone@somewhere.com" [(ngModel)]="registrationModel.Email" [ngFormControl]="signupForm.controls['email']">
+                    <control-message control="email"></control-message>
+                </div>
+                <div class="form-group" *ngIf="selectedUserType=='USER'">
+                    <label for="phonenumber">Phone Number</label>
+                    <input ngControl="phonenumber" type="text" class="form-control" placeholder="Enter your phonenumber here ex: 01XXXXXXXXX" [(ngModel)]="registrationModel.PhoneNumber" [ngFormControl]="signupForm.controls['phonenumber']">
+                    <control-message control="phonenumber"></control-message>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-group">
+                        <input ngControl="password" type="password" id="sign-up-password" class="form-control" placeholder="Enter your password" [(ngModel)]="registrationModel.Password" [ngFormControl]="signupForm.controls['password']">
+                        <span class="input-group-btn">
+                            <button ncShowPassword [ncPasswordControl]="'sign-up-password'" type="button" id="btnpassword" class="btn btn-default" type="button">
+                            <span class="fa fa-eye"></span></button>
+                        </span>
+                    </div>
+                    <control-message control="password"></control-message>
+                </div>
+                <div class="form-group" *ngIf="selectedUserType=='USER'">
+                    <label for="area">Area you're interested to recieve service from</label>
+                    <!-- The reason you guys are not seeing a ngFromControl here is
+                    an existing bug in Angular2 bootstrap module. For details, go to
+                    https://github.com/valor-software/ng2-bootstrap/issues/463
+                    If its fixed update the process here -->
+                    <input autocomplete="off" type="text" class="form-control" [(ngModel)]="localityQuery" [typeahead]="localities" (typeaheadOnSelect)="onLocalitySelect($event)" [typeaheadOptionsLimit]="7" placeholder="Start typing your area" required>
+                </div>
+            </div>
+        </form>
+        <div *ngIf="submitted && !submitCompleted" class="form-group">
+            <h3>Please Wait..</h3>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                </div>
+            </div>
+        </div>
+        <div *ngIf="submitCompleted" class="form-group">
+            <h3>{{submitResultMessage}}</h3>
+        </div>
+    </modal-body>
+    <modal-footer *ngIf="!submitted && isFormActive">
+        <button type="button" class="btn btn-default" (click)="onBackPressed()">Back</button>
+        <button type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="!signupForm.valid">
+            Sign Up
+        </button>
+    </modal-footer>
+</modal>
